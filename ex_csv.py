@@ -1,9 +1,12 @@
+
 # LISTA DE EXERCÍCIOS – ANÁLISE DE DADOS COM PANDAS Dataset: Ranking
 # Mundial de Universidades (notas.csv)
+
 
 # ============================================================
 # EXPLORAÇÃO INICIAL (EDA BÁSICA)
 # ============================================================
+
 
 import pandas as pd
 df = pd.read_csv("/Users/viniciustanno/Desktop/Faculdade/Vinicius_tanno_analise_de_dado/Vinicius_tanno_analise_de_dado/notas.csv")
@@ -44,9 +47,11 @@ df.groupby("year")["score"].mean()
 # 5. Desvio padrão do score
 df["score"].std()
 
+
 # ============================================================
 # FILTROS E SELEÇÕES
 # ============================================================
+
 
 #----------------------------------------------
 # Exercício 3 – Top Universidades 
@@ -78,30 +83,59 @@ df[["institution", "country", "score"]]
 
 # 2. Mostre universidades entre rank 50 e 100 
 top_50_100 = df[(df["score"]>=50) & (df["score"]<=100)]
-top_50_100
+top_50_100 = df[df["score"].between(50, 100)]
+top_50_100["institution"]
 
 # 3. Mostre universidades cujo país é “United Kingdom”
-df[df["country"] == "United Kingdom"]
+uk = df[df["country"] == "United Kingdom"]
+uk["institution"]
+
 
 # ============================================================ PARTE 3 –
 # MISSING VALUES
 # ============================================================
 
+
 #----------------------------------------------
 # Exercício 5 – Valores Ausentes 
+
 # 1. Quantos valores nulos existem na coluna broad_impact? 
+null_broad_impact = df["broad_impact"].isnull().sum()
+null_broad_impact
+
 # 2. Qual percentual do dataset é nulo? 
+null_percentage = 100*(null_broad_impact/df.shape[0])
+print(f"O percentual do dataset que é nulo é {null_percentage:.2f}%")
+
 # 3. Remova linhas com broad_impact nulo 
+df_without_null = df.dropna(subset=["broad_impact"])
+df_without_null
+
 # 4. Preencha valores nulos com a média 
+df_X = df.fillna(df["broad_impact"].mean())
+df_X
+
 # 5. Compare a média antes e depois do preenchimento
+df_mean = df["broad_impact"].mean()
+df_mean_X = df_X["broad_impact"].mean()
+print(f"A média antes era {df_mean:.2f}, depois do preenchimento ficou {df_mean_X:.2f}")
+
 
 # ============================================================ PARTE 4 –
 # GROUPBY (ANÁLISE POR PAÍS E ANO)
 # ============================================================
 
+
 # Exercício 6 – Análise por País 
-# 1. Média do score por país 
+
+# 1. Média do score por país
+df_countries = df.groupby("country")["score"].mean()
+df_countries
+ 
 # 2. País com maior média de score 
+df_countries.idmax()
+
+
 # 3. Quantidade de universidades por país 
 # 4. Top 10 países com mais universidades
 
