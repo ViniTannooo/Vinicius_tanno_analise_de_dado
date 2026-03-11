@@ -133,10 +133,11 @@ df_countries = df.groupby("country")["score"].mean()
 df_countries
  
 # 2. País com maior média de score 
-df_countries.idmax()
-
+df_countries.idxmax()
 
 # 3. Quantidade de universidades por país 
+
+
 # 4. Top 10 países com mais universidades
 
 # Exercício 7 – Análise por Ano 
