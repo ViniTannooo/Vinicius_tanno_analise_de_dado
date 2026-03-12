@@ -65,3 +65,133 @@ todos_animais = animais_domesticos + animais_selvagens
 
 # 20 - Imprima todos animais
 print(todos_animais)
+
+# 21 - Crie uma lista nomes contendo os nomes: "Ana", "Pedro", "Maria", "João".
+nomes = ["Ana", "Pedro", "Maria", "João"]
+
+# 22 - Utilize um loop for para imprimir cada nome da lista.
+for nome in nomes:
+    print(nome)
+
+#---------------------------------------------------
+# 23 - Crie uma nova lista nomes_maiusculos contendo os nomes da lista nomes em letras maiúsculas. Utilize um loop for para isso.
+
+nomes_maiusculos = []
+
+for nome in nomes:
+    nome_maiusculo = nome.upper()
+    nomes_maiusculos.append(nome_maiusculo)
+
+print(nomes_maiusculos)
+
+#---------------------------------------------------
+# 24 - Crie uma lista numeros contendo os números de 1 a 20. Utilize um loop for para imprimir apenas os números pares.
+
+numeros = list(range(1,21))
+numeros_par = []
+
+for numero in numeros:
+    if numero%2 == 0:
+        numeros_par.append(numero)
+
+print(numeros_par)
+
+#---------------------------------------------------
+# 25 - Usando a lista numeros, utilize um loop for para criar uma nova lista quadrados contendo o quadrado de cada número.
+
+numeros_quadrado = []
+
+for numero in numeros:
+    numero_quadrado = numero**2
+    numeros_quadrado.append(numero_quadrado)
+
+print(numeros_quadrado)
+
+#---------------------------------------------------
+# 26 - Crie uma lista palavras contendo: "python", "java", "c", "javascript". Utilize um loop for para imprimir o tamanho (número de letras) de cada palavra.
+
+palavras = ["python", "java", "c", "javascript"]
+
+for palavra in palavras:
+    palavra_len = len(palavra)
+    print(f"{palavra}: {palavra_len} letras")
+
+#---------------------------------------------------
+# 27 - Crie uma lista idades contendo [12, 18, 25, 40, 60]. Utilize um loop for para imprimir "maior de idade" se a idade for >= 18 ou "menor de idade" se for < 18.
+
+idades = [12, 18, 25, 40, 60]
+
+for idade in idades:
+    if idade<18:
+        print(f"{idade}: Menor de idade")
+    else:
+        print(f"{idade}: Maior de idade")
+
+#---------------------------------------------------
+# 28 - Crie uma lista notas contendo [5.5, 7.0, 8.3, 4.9, 6.2]. Utilize um loop for para contar quantos alunos estão aprovados (nota >= 7) e quantos estão reprovados (nota < 7).
+
+notas = [5.5, 7.0, 8.3, 4.9, 6.2]
+
+for nota in notas:
+    if nota<7:
+        print(f"{nota}: Reprovado")
+    else:
+        print(f"{nota}: Aprovado")
+
+#---------------------------------------------------
+# 29 - Crie uma lista compras com ["arroz", "feijão", "batata", "carne"]. Utilize um loop for para imprimir cada item precedido da frase "Preciso comprar: ".
+
+compras = ["arroz", "feijão", "batata", "carne"]
+
+for compra in compras:
+    print(f"Preciso comprar {compra}")
+
+#---------------------------------------------------
+# 30 - Escreva um programa que use um loop while para imprimir os números de 1 a 10.
+
+num = 1
+
+while num <=10:
+    print(num)
+    num = num + 1
+
+#---------------------------------------------------
+# 31 - Usando um loop while, peça para o usuário digitar um número inteiro. O programa deve parar quando o usuário digitar o número 0.
+
+num = int(input("Digite um número inteiro: "))
+
+while num != 0:
+    num = int(input("Digite outro número inteiro: "))
+else:
+    print("Você digitou o número 0")
+
+#---------------------------------------------------
+# 32 - Utilize um loop while para calcular a soma dos números de 1 a 100.
+
+num = 0
+num_sum = 0
+
+while num <= 100:
+    num_sum = num_sum + num
+    num = num + 1 
+
+print(num_sum)
+
+#---------------------------------------------------
+# 33 - Peça para o usuário adivinhar um número secreto (por exemplo, 7). Use um loop while para continuar pedindo até que ele acerte.
+
+num = 0
+
+while num != 7:
+    num = int(input("Digite um número: "))
+else:
+    print("Você acertou")
+
+#---------------------------------------------------
+# 34 - Crie um loop while que imprima todos os números pares de 2 até 20.
+
+num = 2
+
+while num <= 20:
+    print(num)
+    num = num + 2
