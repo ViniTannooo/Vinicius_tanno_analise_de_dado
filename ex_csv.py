@@ -136,11 +136,20 @@ df_countries
 df_countries.idxmax()
 
 # 3. Quantidade de universidades por país 
-
+institution_country = df.groupby("country")["institution"].count()
 
 # 4. Top 10 países com mais universidades
+institution_country.sort_values(ascending=False).head(10)
+
 
 # Exercício 7 – Análise por Ano 
+
 # 1. Média do score por ano 
+year_mean = df.groupby("year")["score"].mean()
+year_mean
+
 # 2. Qual ano teve maior média? 
+year_mean.idxmax()
+
 # 3. Faça um gráfico da evolução do score médio ao longo do tempo
+year_mean.plot(kind="line", marker="o", figsize=(10,5),color="darkblue")
