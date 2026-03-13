@@ -25,12 +25,16 @@ dados_vendas = {
 
 # Exercicio 1:
 # a) Crie o DataFrame df_vendas usando dados_vendas
+df_vendas = pd.DataFrame(dados_vendas)
+
 # b) Mostre as 5 primeiras linhas
+df_vendas.head()
+
 # c) Mostre o formato (linhas, colunas)
+df_vendas.shape
+
 # d) Mostre os tipos de dados das colunas
-
-# RESOLUCAO: complete aqui
-
+df_vendas.dtypes
 
 
 # -------------------------------------------------
@@ -38,11 +42,15 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 2:
-# a) Mostre apenas as colunas "mes" e "vendas"
-# b) Mostre somente a primeira linha
-# c) Mostre as linhas de indice 2 ate 4
 
-# RESOLUCAO: complete aqui
+# a) Mostre apenas as colunas "mes" e "vendas"
+df_vendas[["mes", "vendas"]]
+
+# b) Mostre somente a primeira linha
+df_vendas.iloc[0]
+
+# c) Mostre as linhas de indice 2 ate 4
+df_vendas.iloc[2:5]
 
 
 # -------------------------------------------------
@@ -50,11 +58,15 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 3:
-# a) Filtre vendas acima de 12000
-# b) Filtre apenas a filial "Centro"
-# c) Filtre vendas acima de 11000 na filial "Norte"
 
-# RESOLUCAO: complete aqui
+# a) Filtre vendas acima de 12000
+df_vendas[df_vendas['vendas']>12000]
+
+# b) Filtre apenas a filial "Centro"
+df_vendas[df_vendas["filial"]=="Centro"]
+
+# c) Filtre vendas acima de 11000 na filial "Norte"
+df_vendas[(df_vendas["filial"]=="Norte") & (df_vendas["vendas"]>11000)]
 
 
 # -------------------------------------------------
@@ -62,11 +74,15 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 4:
-# a) Crie a coluna "ticket_medio" = vendas / clientes
-# b) Crie a coluna "meta_batida" com True para vendas >= 13000
-# c) Mostre apenas "filial", "mes", "ticket_medio", "meta_batida"
 
-# RESOLUCAO: complete aqui
+# a) Crie a coluna "ticket_medio" = vendas / clientes
+df_vendas["ticket médio"] = df_vendas["vendas"]/df_vendas["clientes"]
+
+# b) Crie a coluna "meta_batida" com True para vendas >= 13000
+df_vendas["meta batida"] = df_vendas["vendas"]>=13000
+
+# c) Mostre apenas "filial", "mes", "ticket_medio", "meta_batida"
+df_vendas[['filial', 'mes', 'ticket_medio', 'meta_batida']]
 
 
 # -------------------------------------------------
@@ -74,11 +90,16 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 5:
-# a) Calcule total de vendas por filial
-# b) Calcule media de clientes por mes
-# c) Descubra a filial com maior total de vendas
 
-# RESOLUCAO: complete aqui
+# a) Calcule total de vendas por filial
+vendas_filial = df_vendas.groupby("filial")["vendas"].sum()
+vendas_filial
+
+# b) Calcule media de clientes por mes
+df_vendas.groupby("mes")["clientes"].mean()
+
+# c) Descubra a filial com maior total de vendas
+vendas_filial.idxmax()
 
 
 # -------------------------------------------------
@@ -86,11 +107,15 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 6:
-# a) Ordene df_vendas por "vendas" em ordem decrescente
-# b) Pegue os 3 maiores resultados de vendas
-# c) Mostre um ranking com "filial", "mes", "vendas"
 
-# RESOLUCAO: complete aqui
+# a) Ordene df_vendas por "vendas" em ordem decrescente
+df_vendas_decrescente = df_vendas.sort_values(by='vendas', ascending=False)
+
+# b) Pegue os 3 maiores resultados de vendas
+df_vendas_decrescente[0:3]
+
+# c) Mostre um ranking com "filial", "mes", "vendas"
+df_vendas_decrescente[['filial', 'mes', 'vendas']]
 
 
 # -------------------------------------------------
@@ -98,10 +123,13 @@ dados_vendas = {
 # -------------------------------------------------
 
 # Exercicio 7 (desafio):
+
 # 1) Gere um resumo por filial com:
 #    - total_vendas
 #    - media_ticket_medio
 #    - total_clientes
+
+
 # 2) Ordene o resumo por total_vendas (desc)
 # 3) Exiba qual filial teve melhor desempenho geral
 
