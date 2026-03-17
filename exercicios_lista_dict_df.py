@@ -128,16 +128,23 @@ df_vendas_decrescente[['filial', 'mes', 'vendas']]
 #    - total_vendas
 #    - media_ticket_medio
 #    - total_clientes
-
+resumo_filial = df_vendas.groupby("filial").agg({
+    "vendas": "sum",
+    "ticket médio": "mean",
+    "clientes": "sum"
+}).rename(columns={
+    "vendas": "total_vendas", 
+    "ticket médio": "media_ticket_medio", 
+    "clientes": "total_clientes"
+})
+resumo_filial
 
 # 2) Ordene o resumo por total_vendas (desc)
+resumo_filial.sort_values(by="total_vendas", ascending=False)
+
 # 3) Exiba qual filial teve melhor desempenho geral
-
-# RESOLUCAO: complete aqui
-
-
-
-
+melhor_filial = resumo_filial.index[0]
+melhor_filial
 
 
 # ===========================================================
@@ -156,12 +163,16 @@ dados_list_dict = [{
 # -----------------------------------------------------------
 
 # 1. Qual é o tipo de dados_list_dict?
+type(dados_list_dict)
+
 # 2. Qual é o tipo do primeiro elemento?
+type(dados_list_dict[0])
+
 # 3. Como acessar a lista da "Column A"?
+dados_list_dict[0]["Column A"]
+
 # 4. Como acessar o segundo elemento da "Column C"?
-
-# RESPONDA AQUI:
-
+dados_list_dict[0]["Column C"][1]
 
 
 # -----------------------------------------------------------
@@ -169,15 +180,25 @@ dados_list_dict = [{
 # -----------------------------------------------------------
 
 # 1. Converta dados_list_dict[0] em um DataFrame chamado df1
+import pandas as pd
+
+df_dados = pd.DataFrame(dados_list_dict[0])
+df_dados
+
 # 2. Mostre:
+
 #    - shape
+df_dados.shape
+
 #    - tipos das colunas
+df_dados.dtypes
+
 # 3. Calcule:
 #    - soma de cada coluna
+df_dados.sum()
+
 #    - média de cada coluna
-
-# RESOLVA AQUI:
-
+df_dados.mean()
 
 
 # -----------------------------------------------------------
@@ -186,11 +207,15 @@ dados_list_dict = [{
 
 # No df1:
 # 1. Crie coluna "Total" = soma das colunas
+df_dados["Total"] = df_dados.sum(axis=1)
+df_dados
+
 # 2. Crie coluna "Media" = média por linha
+df_dados["Média"] = df_dados.mean(axis=1)
+df_dados
+
 # 3. Filtre linhas onde Total > 10
-
-# RESOLVA AQUI:
-
+df_dados[df_dados["Total"]<=10]
 
 
 # -----------------------------------------------------------
@@ -199,7 +224,13 @@ dados_list_dict = [{
 
 # 1. Converta df1 para:
 #    - lista de dicionários [ {linha1}, {linha2}, {linha3} ]
+dicionarios = df_dados.to_dict(orient="records")
+dicionarios
+
 #    - dicionário de listas { coluna1: [valores], coluna2: [valores] }
+lista = df_dados.to_dict(orient="list")
+lista
+
 # Dica:
 # orient="records":
 #   Cada elemento representa uma linha.
@@ -218,11 +249,19 @@ dados_list_dict = [{
 # -----------------------------------------------------------
 
 # 1. Transforme a coluna "Column A" em uma lista chamada lista_a.
+lista_a = df_dados["Column A"].to_list()
+lista_a
+
 # 2. Multiplique cada elemento da lista por 10.
+lista_a_10 = []
+for num in lista_a:
+    num = num*10
+    lista_a_10.append(num)
+lista_a_10
+
 # 3. Crie uma nova coluna chamada "Column A x10" com essa nova lista.
-
-# RESOLVA AQUI:
-
+df_dados["Column A x10"] = lista_a_10
+df_dados
 
 
 # ===========================================================
@@ -253,12 +292,20 @@ dados = [
 
 # Exercício 1
 # 1. Qual o tipo da variável dados?
+type(dados)
+
 # 2. Quantos registros existem?
+len(dados)
+
 # 3. Quais são as chaves do primeiro dicionário?
+list(dados[0].keys())
+
 # 4. Liste todos os países existentes (sem repetição).
-
-# RESOLVA AQUI:
-
+paises = []
+for dado in dados:
+    if dado["nome_pais"] not in paises:
+        paises.append(dado["nome_pais"])
+paises
 
 
 # ===========================================================
@@ -267,11 +314,16 @@ dados = [
 
 # Exercício 2
 # 1. Converta dados para DataFrame chamado df
+df = pd.DataFrame(dados)
+
 # 2. Mostre shape, tipos e primeiras linhas
+df.shape
+df.dtypes
+df.head()
+
 # 3. Converta a coluna periodo para datetime
-
-# RESOLVA AQUI:
-
+pd.to_datetime(df["periodo"])
+df
 
 
 # ===========================================================
@@ -279,21 +331,30 @@ dados = [
 # ===========================================================
 
 # Exercício 3 – Filtros
-# 1. Filtre apenas Brasil
-# 2. Filtre apenas Produto A
-# 3. Filtre valor > 4000
-# 4. Combine Brasil + Produto A
 
-# RESOLVA AQUI:
+# 1. Filtre apenas Brasil
+df[df["nome_pais"] == "Brasil"]
+
+# 2. Filtre apenas Produto A
+df[df["descricao"] == "Produto A"]
+
+# 3. Filtre valor > 4000
+df[df["valor"] > 4000]
+
+# 4. Combine Brasil + Produto A
+df[(df["nome_pais"] == "Brasil") & (df["descricao"] == "Produto A")]
 
 
 # Exercício 4 – Ordenação
+
 # 1. Ordene por valor crescente
+df.sort_values(by="valor", ascending=True)
+
 # 2. Ordene por valor decrescente
+df.sort_values(by="valor", ascending=False)
+
 # 3. Ordene por periodo e depois por valor
-
-# RESOLVA AQUI:
-
+df.sort_values(by=["periodo", "valor"], ascending=[True, True])
 
 
 # ===========================================================
@@ -301,22 +362,27 @@ dados = [
 # ===========================================================
 
 # Exercício 5 – GroupBy Simples
-# 1. Total exportado por país
-# 2. Total exportado por produto
-# 3. Média por país
-# 4. Quantidade de operações por país
 
-# RESOLVA AQUI:
+# 1. Total exportado por país
+df.groupby("nome_pais")["valor"].sum()
+
+# 2. Total exportado por produto
+df.groupby("id_produto")["valor"].sum()
+
+# 3. Média por país
+df.groupby("nome_pais")["valor"].mean()
+
+# 4. Quantidade de operações por país
+df.groupby("nome_pais").size()
 
 
 # Exercício 6 – GroupBy Múltiplo
+
 # Agrupe por nome_pais e descricao
 # Calcule soma, média e contagem
+df.groupby(["nome_pais", "descricao"])["valor"].agg(["sum", "mean", "count"])
 
 # Explique em comentário o que essa tabela representa
-
-# RESOLVA AQUI:
-
 
 
 # ===========================================================
@@ -327,6 +393,8 @@ dados = [
 # Linhas: periodo
 # Colunas: descricao
 # Valores: soma de valor
+pivot_produto = df.pivot_table(index='periodo', columns='descricao', values='valor', aggfunc='sum')
+pivot_produto
 
 # Responda:
 # 1. Qual produto vendeu mais?
@@ -334,7 +402,9 @@ dados = [
 # 3. Existe mês sem venda?
 
 # RESOLVA AQUI:
-
+df['ano'] = df['periodo'].dt.year
+df['mes'] = df['periodo'].dt.month
+df['valor_mil'] = df['valor'] / 1000
 
 # Exercício 8 – Pivot por País
 # Linhas: periodo
@@ -344,7 +414,8 @@ dados = [
 # Explique o que podemos interpretar dessa tabela
 
 # RESOLVA AQUI:
-
+pais = df.pivot_table(index="periodo", columns="nome_pais", values="valor", aggfunc="sum")
+pais
 
 
 # ===========================================================
