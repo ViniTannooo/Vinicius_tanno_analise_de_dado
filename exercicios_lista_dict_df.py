@@ -428,7 +428,14 @@ pais
 # 3. Calcule crescimento percentual por produto mês a mês
 
 # RESOLVA AQUI:
+df['periodo'] = pd.to_datetime(df['periodo'])
+df['ano'] = df['periodo'].dt.year
+df['mes'] = df['periodo'].dt.month
+df['valor_mil'] = df['valor'] / 1000
 
+df = df.sort_values(by=['descricao', 'periodo'])
+df['crescimento'] = df.groupby('descricao')['valor'].pct_change()
+df
 
 
 # ===========================================================
@@ -441,11 +448,6 @@ pais
 # 3. Verifique duplicatas
 
 # RESOLVA AQUI:
-
-
-
-
-
-
-
-
+df.isnull().sum()
+df[df["valor"]<0]
+df.duplicated().sum()
