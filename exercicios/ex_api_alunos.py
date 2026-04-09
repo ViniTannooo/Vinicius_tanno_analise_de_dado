@@ -179,8 +179,17 @@ Exercícios:
 """
 # RESOLVA AQUI:
 # 1. Consulte os metadados de uma série
-url_ipea_meta = "http://www.ipeadata.gov.br/api/odata4/Metadados"
-res_ipea = requests.get(url_ipea_meta)
+import requests
+import pandas as pd
+
+url = "http://www.ipeadata.gov.br/api/odata4/Metadados"
+response = requests.get(url)
+response.status_code
+dados = response.json()
+dados = dados["value"]
+df = pd.DataFrame(dados)
+df.columns
+df_filtrado = df.loc[:,["SERNOME", "SERCOMENTARIO", "UNINOME"]]
 
 if res_ipea.status_code == 200:
     # Pegando a primeira série da lista
