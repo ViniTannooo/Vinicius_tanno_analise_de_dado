@@ -38,7 +38,7 @@ response = requests.get(url)
 response.status_code
 dados = response.json()
 df = pd.DataFrame(dados)
-df = df.loc[:, ["SECODIGO"]]
+df = df.loc[:, ["nome"]]
 df
 
 
@@ -58,8 +58,22 @@ Exercícios:
 5. Mostre as principais informações.
 """
 # RESOLVA AQUI:
+# 1. Consulta ao CEP da Avenida Paulista
+url_viacep = "https://viacep.com.br/ws/01310100/json/"
+response_viacep = requests.get(url_viacep)
 
+# 2. Verifica o status da requisição
+print(f"\n[ViaCEP] Status: {response_viacep.status_code}")
 
+if response_viacep.status_code == 200:
+    # 3. Converte a resposta para JSON
+    dados_viacep = response_viacep.json()
+    
+    # 4. Transforma em DataFrame (passamos como lista de dict)
+    df_viacep = pd.DataFrame([dados_viacep])
+    
+    # 5. Mostra as principais informações
+    print(df_viacep[['cep', 'logradouro', 'bairro', 'localidade', 'uf']])
 
 # ===========================================================
 # PARTE 3 – BRASILAPI
@@ -76,8 +90,28 @@ Explique:
 O que você percebe sobre a estrutura do JSON retornado?
 """
 # RESOLVA AQUI:
+# 1. Consulta a lista de bancos
+url_brasilapi = "https://brasilapi.com.br/api/banks/v1"
+response_brasilapi = requests.get(url_brasilapi)
 
-
+if response_brasilapi.status_code == 200:
+    # 2. Transforme o resultado em DataFrame
+    df_bancos = pd.DataFrame(response_brasilapi.json())
+    
+    # 3. Conte quantos bancos existem
+    print(f"\n[BrasilAPI] Total de bancos retornados: {len(df_bancos)}")
+    
+    # 4. Filtre bancos cujo nome contenha "Brasil"
+    # Precisamos preencher valores nulos (NaN) para evitar erros no .str.contains
+    df_bancos['fullName'] = df_bancos['fullName'].fillna('')
+    bancos_brasil = df_bancos[df_bancos['fullName'].str.contains("Brasil", case=False, na=False)]
+    print(f"Número de bancos com 'Brasil' no nome: {len(bancos_brasil)}")
+    print(bancos_brasil[['ispb', 'name', 'code']].head())
+    
+# Explicação:
+# A estrutura do JSON retornado é uma lista/array contendo vários objetos de dicionário.
+# Cada objeto representa um banco. Quando processado pelo pandas, a lista de dicionários
+# é convertida diretamente para DataFrame (chaves viram colunas).
 
 # ===========================================================
 # PARTE 4 – SERVIÇO DE DADOS IBGE
@@ -97,8 +131,36 @@ Desafio:
 Consultar a população total de um estado específico.
 """
 # RESOLVA AQUI:
+# 1. Consulta os estados brasileiros
+url_ibge = "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+response_ibge = requests.get(url_ibge)
 
+if response_ibge.status_code == 200:
+    # 2. Transforme em DataFrame
+    df_estados = pd.DataFrame(response_ibge.json())
+    
+    # A coluna 'regiao' contém um dicionário, precisamos extrair a sigla/nome.
+    df_estados['regiao_nome'] = df_estados['regiao'].apply(lambda x: x.get('nome') if type(x) == dict else None)
+    
+    # 3. Mostre apenas: nome, sigla, região
+    print("\n[IBGE] Estados Brasileiros:")
+    print(df_estados[['nome', 'sigla', 'regiao_nome']].head())
 
+# 4. Desafio - População total de um estado (SP - código 35)
+codigo_estado_sp = "35"
+# Variável 93 do agregado 6579 corresponde à população no Censo de 2022.
+url_populacao = f"https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/2022/variaveis/93?localidades=N3[{codigo_estado_sp}]"
+response_pop = requests.get(url_populacao)
+
+if response_pop.status_code == 200:
+    try:
+        dados_pop = response_pop.json()
+        serie = dados_pop[0]['resultados'][0]['series'][0]
+        populacao_sp = serie['serie']['2022']
+        nome_localidade = serie['localidade']['nome']
+        print(f"População do estado de {nome_localidade} em 2022: {populacao_sp}")
+    except (IndexError, KeyError):
+        print("Erro ao processar dados de população.")
 
 # ===========================================================
 # PARTE 5 – IPEA DATA
@@ -116,8 +178,30 @@ Exercícios:
 4. Transforme em DataFrame.
 """
 # RESOLVA AQUI:
+# 1. Consulte os metadados de uma série
+url_ipea_meta = "http://www.ipeadata.gov.br/api/odata4/Metadados"
+res_ipea = requests.get(url_ipea_meta)
 
-
+if res_ipea.status_code == 200:
+    # Pegando a primeira série da lista
+    primeira_serie = res_ipea.json()['value'][0]
+    sercodigo = primeira_serie['SERCODIGO']
+    
+    # 2. Identifique nome da série, descrição e unidade
+    print("\n[IPEA] Metadados da Série:")
+    print("Série:", primeira_serie.get('SERNOME'))
+    print("Descrição:", primeira_serie.get('SERCOMENTARIO'))
+    print("Unidade:", primeira_serie.get('UNINOME'))
+    
+    # 3. Consulte os valores históricos da série
+    url_ipea_valores = f"http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='{sercodigo}')"
+    res_valores = requests.get(url_ipea_valores)
+    
+    if res_valores.status_code == 200:
+        # 4. Transforme em DataFrame
+        df_valores = pd.DataFrame(res_valores.json()['value'])
+        print(f"\nValores Históricos da Série {sercodigo}:")
+        print(df_valores.head())
 
 # ===========================================================
 # PARTE 6 – BANCO CENTRAL DO BRASIL (BCB)
@@ -142,8 +226,36 @@ Exercícios:
 4. Plote gráfico de linha.
 """
 # RESOLVA AQUI:
+# 1. Consulte a cotação do dólar em 2024
+# PTAX Dolar: bcdata.sgs.1
+url_bcb = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados"
+parametros = {
+    "formato": "json",
+    "dataInicial": "01/01/2024",
+    "dataFinal": "31/12/2024"
+}
+res_bcb = requests.get(url_bcb, params=parametros)
 
-
+if res_bcb.status_code == 200:
+    # 2. Transforme em DataFrame
+    df_bcb = pd.DataFrame(res_bcb.json())
+    
+    # Conversão da coluna valor de string para float para cálculos matemáticos
+    df_bcb['valor'] = df_bcb['valor'].astype(float)
+    
+    # 3. Calcule: média, valor máximo, valor mínimo
+    media = df_bcb['valor'].mean()
+    val_max = df_bcb['valor'].max()
+    val_min = df_bcb['valor'].min()
+    print("\n[BCB] Cotação do Dólar PTAX em 2024:")
+    print(f"Média: R$ {media:.4f} | Máximo: R$ {val_max:.4f} | Mínimo: R$ {val_min:.4f}")
+    
+    # 4. Plote gráfico de linha
+    # Opcional caso use em IDE interativa (exige matplotlib)
+    # import matplotlib.pyplot as plt
+    # df_bcb['data'] = pd.to_datetime(df_bcb['data'], format='%d/%m/%Y')
+    # df_bcb.plot(x='data', y='valor', title="Dólar PTAX (2024)", figsize=(8,4))
+    # plt.show()
 
 # ===========================================================
 # PARTE 7 – FOOTBALL-DATA.ORG
@@ -162,8 +274,34 @@ Explique:
 O que são parâmetros de consulta?
 """
 # RESOLVA AQUI:
+# API Exige TOKEN. Se estiver vazio o endpoint retorna um erro de Autenticação (400 Client Error).
+headers_football = {
+    "X-Auth-Token": "COLOQUE_AQUI_SEU_TOKEN" # Substitua pelo token real do Football-Data
+}
 
+url_areas = "https://api.football-data.org/v4/areas"
 
+# Descomente o código abaixo para testar apenas quando tiver um Token Válido
+"""
+res_f = requests.get(url_areas, headers=headers_football)
+if res_f.status_code == 200:
+    # 1. Consulta as áreas mapeadas pela API
+    areas = res_f.json().get('areas', [])
+    df_areas = pd.DataFrame(areas)
+    
+    # 2. Filtre o Brasil (CountryCode = "BRA")
+    brasil = df_areas[df_areas['countryCode'] == "BRA"]
+    print("\n[Football-Data] Filtro Brasil:")
+    print(brasil)
+    
+    # 3 e 4. Consultas relacionadas a times da temporada e competições podem 
+    # ser feitas filtrando e buscando do objeto pai conforme endpoint /teams ou /competitions.
+"""
+
+# Explicação:
+# Parâmetros de consulta (Query Parameters) são atributos passados na URL
+# após o sinal de `?`, como `?season=2025`. Eles servem para filtrar ou modificar 
+# os dados que a API vai retornar, funcionando como um filtro de busca.
 
 # ===========================================================
 # PARTE 8 – RAPIDAPI (EXEMPLOS)
@@ -183,8 +321,33 @@ Desafio:
 Identifique níveis aninhados no JSON.
 """
 # RESOLVA AQUI:
+# Exemplo fictício de pesquisa no RAPIDAPI utilizando o GeoDB Cities API.
+url_rapid = "https://wft-geo-db.p.rapidapi.com/v1/geo/cities"
+querystring_rapid = {"namePrefix": "Brasilia", "countryIds": "BR"}
 
+headers_rapid = {
+	"X-RapidAPI-Key": "COLOQUE_AQUI_SEU_TOKEN",
+	"X-RapidAPI-Host": "wft-geo-db.p.rapidapi.com"
+}
 
+# Descomente para testar tendo a chave:
+"""
+res_rapid = requests.get(url_rapid, headers=headers_rapid, params=querystring_rapid)
+if res_rapid.status_code == 200:
+    # 2. Faça uma consulta
+    dados_rapid = res_rapid.json()
+    
+    # 3. Transforme a resposta em DataFrame
+    # O JSON costuma vir com uma chave "data" para a lista de resultados.
+    df_rapid = pd.DataFrame(dados_rapid.get('data', []))
+    print("\n[RapidAPI] Cidades Encontradas:")
+    print(df_rapid.head())
+"""
+
+# 4. Explique a estrutura e níveis aninhados: 
+# JSON possui níveis aninhados porque as respostas organizam as informações hierarquicamente.
+# Por exemplo, pode existir um campo 'metadata' geral da API por fora da lista, e uma 
+# lista de objetos 'data' que contém os registros, onde cada registro pode ter dicionários internos.
 
 # ===========================================================
 # PARTE 9 – EXPLORAÇÃO LIVRE
@@ -201,8 +364,26 @@ Exercícios:
 4. Faça uma pequena análise exploratória.
 """
 # RESOLVA AQUI:
+# 1. API escolhida: PokeAPI
+url_poke = "https://pokeapi.co/api/v2/pokemon?limit=10"
 
+# 2. Consulte dados
+res_poke = requests.get(url_poke)
 
+if res_poke.status_code == 200:
+    dados_poke = res_poke.json()['results']
+    
+    # 3. Transforme em DataFrame
+    df_poke = pd.DataFrame(dados_poke)
+    
+    print("\n[Exploração Livre - PokeAPI] Primeiros 10 Pokémons:")
+    print(df_poke)
+    
+    # 4. Faça uma pequena análise exploratória
+    # Vamos ver quantos caracteres o nome possui e qual a url apontada.
+    df_poke['tamanho_nome'] = df_poke['name'].apply(len)
+    media_caracteres = df_poke['tamanho_nome'].mean()
+    print(f"Média de caracteres no nome: {media_caracteres:.1f}")
 
 # ===========================================================
 # Revisão FINAL
@@ -211,9 +392,20 @@ Exercícios:
 Responda:
 
 1. O que é uma API?
+R: API (Application Programming Interface) é uma interface que permite que duas aplicações se comuniquem e troquem dados livremente e de forma estruturada.
+
 2. O que é um endpoint?
+R: Um endpoint é uma exata URL final na qual os recursos procurados pela API podem ser acessados (como um endereço para a rota responsável por entregar o dado da empresa).
+
 3. O que são parâmetros?
+R: São variáveis enviadas na requisição HTTP (podendo ser por Query URL com o caractere '?') para filtrar, alinhar, paginar ou alterar o escopo do que se quer recuperar da API.
+
 4. O que é JSON?
+R: JSON (JavaScript Object Notation) é um padrão popular extremamente leve estruturado de texto para armazenar e trocar dados (sendo formado essencialmente em pares ordenados chave: valor).
+
 5. O que é Headers?
+R: Cabeçalhos (Headers) são informações extras empacotadas na troca entre cliente-servidor para passar metadados e configuração da chamada, como tokens, identificadores de browsers, codificação ou formato estipulado.
+
 6. O que é Token?
+R: Token é uma credencial ou chave (string) digital e encriptografada que prova e autentica uma identidade e sua autorização frente à API, liberando o acesso a endpoints protegidos.
 """
