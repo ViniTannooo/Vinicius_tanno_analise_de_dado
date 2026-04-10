@@ -188,29 +188,6 @@ response.status_code
 dados = response.json()
 dados = dados["value"]
 df = pd.DataFrame(dados)
-df.columns
-df_filtrado = df.loc[:,["SERNOME", "SERCOMENTARIO", "UNINOME"]]
-
-if res_ipea.status_code == 200:
-    # Pegando a primeira série da lista
-    primeira_serie = res_ipea.json()['value'][0]
-    sercodigo = primeira_serie['SERCODIGO']
-    
-    # 2. Identifique nome da série, descrição e unidade
-    print("\n[IPEA] Metadados da Série:")
-    print("Série:", primeira_serie.get('SERNOME'))
-    print("Descrição:", primeira_serie.get('SERCOMENTARIO'))
-    print("Unidade:", primeira_serie.get('UNINOME'))
-    
-    # 3. Consulte os valores históricos da série
-    url_ipea_valores = f"http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='{sercodigo}')"
-    res_valores = requests.get(url_ipea_valores)
-    
-    if res_valores.status_code == 200:
-        # 4. Transforme em DataFrame
-        df_valores = pd.DataFrame(res_valores.json()['value'])
-        print(f"\nValores Históricos da Série {sercodigo}:")
-        print(df_valores.head())
 
 # ===========================================================
 # PARTE 6 – BANCO CENTRAL DO BRASIL (BCB)

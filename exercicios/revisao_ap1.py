@@ -4,12 +4,12 @@
 
 # Listas e dicionários
 
-Lista []
-Dicionário {}
+# Lista []
+# Dicionário {}
 
 # Como pegar elementos de listas e dicionários
-Lista[0]
-Dicionário["Key"]
+# Lista[0]
+# Dicionário["Key"]
 
 #-----------------------------------------------------------
 # OBTER DADOS
