@@ -415,7 +415,20 @@ df_min = float(df["valor"].min())
 
 # RESOLVA AQUI:
 
+URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados"
+Params = {
+    "formato": "json",
+    "dataInicial": "01/01/2023",
+    "dataFinal": "31/12/2023"
+    }
 
+response = requests.get(URL, params=Params)
+
+response.status_code
+
+df = pd.DataFrame(response.json())
+
+df.loc[df["valor"].idxmax()]
 
 
 # ----------------------------------------------------------
@@ -430,6 +443,16 @@ df_min = float(df["valor"].min())
 
 # RESOLVA AQUI:
 
+URL = "https://viacep.com.br/ws/01310100/json/"
+
+response = requests.get(URL)
+
+response.status_code
+
+df = pd.DataFrame([response.json()])
+
+print(df[["cep","logradouro", "bairro", "localidade", "uf"]])
+
 
 # ----------------------------------------------------------
 # Questão 28
@@ -443,6 +466,18 @@ df_min = float(df["valor"].min())
 
 # RESOLVA AQUI:
 
+URL = "https://brasilapi.com.br/api/banks/v1"
+
+response = requests.get(URL)
+
+df = pd.DataFrame(response.json())
+
+response.status_code
+
+len(df)
+
+bancos_brasil = df[df["fullName"].str.contains("Brasil", case=False)]
+bancos_brasil
 
 # ----------------------------------------------------------
 # Questão 29
@@ -457,6 +492,18 @@ df_min = float(df["valor"].min())
 
 # RESOLVA AQUI:
 
+URL_IBGE = "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+
+response_IBGE = requests.get(URL)
+
+response_IBGE.status_code
+
+df_IBGE = pd.DataFrame(response_IBGE.json())
+
+# b) ?
+
+df_estado = df_IBGE.groupby["estado"]
+# c) ?
 
 # ----------------------------------------------------------
 # Questão 30 – DESAFIO INTEGRADOR
@@ -466,3 +513,19 @@ df_min = float(df["valor"].min())
 # ----------------------------------------------------------
 
 # RESOLVA AQUI:
+
+URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados"
+Params = {
+    "formato": "json",
+    "dataInicial": "01/01/2023",
+    "dataFinal": "31/12/2023"
+    }
+
+response = requests.get(URL, params=Params)
+
+response.status_code
+
+df = pd.DataFrame(response.json())
+
+df.loc[df["valor"].idxmax()]
+
