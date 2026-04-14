@@ -362,11 +362,14 @@ df_titanic.isnull().sum()
 """
 RESPONDA AQUI:
 
-API:
+API: Uma interface que conecta dois sistemas e permite que
+eles possam trocar dados padronizados
 
-Endpoint:
+Endpoint: É a URL específica da informação que você quer
+encontrar, como se fosse o "endereço" dos dados
 
-Status_code 200:
+Status_code 200: Quer dizer que a API está funcionando e foi
+possível puxar todas as informações
 """
 
 
@@ -384,6 +387,24 @@ Status_code 200:
 
 # RESOLVA AQUI:
 
+URL = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados"
+Params = {
+    "formato": "json",
+    "dataInicial": "01/01/2024",
+    "dataFinal": "31/12/2024"
+    }
+
+response = requests.get(URL, params=Params)
+
+response.status_code
+
+df = pd.DataFrame(response.json())
+
+df["valor"] = df["valor"].astype(float)
+
+df_mean = float(df["valor"].mean())
+df_max = float(df["valor"].max())
+df_min = float(df["valor"].min())
 
 # ----------------------------------------------------------
 # Questão 26
@@ -393,6 +414,8 @@ Status_code 200:
 # ----------------------------------------------------------
 
 # RESOLVA AQUI:
+
+
 
 
 # ----------------------------------------------------------
