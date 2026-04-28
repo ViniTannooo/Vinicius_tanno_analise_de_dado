@@ -1,11 +1,19 @@
 import sqlite3
 import pandas as pd
 
+# Banco de Dados SQLite
 alunos_db = "cadastro_estudantes.db"
 
-conn = sqlite3.connect(nome_db)
+# Conexão com o banco
+conn = sqlite3.connect(alunos_db)
 
-query = "select * from tb_alunos"
-df_alunos = pd.read_sql(query, conn)
-queryu = "select * from tb_enderecos""
-df_enderecos = pq.read_sql(query, conn)
+# Consulta da tabela de alunos
+query_alunos = "select * from tb_alunos"
+df_alunos = pd.read_sql(query_alunos, conn)
+
+# Consulta da tabela de endereços
+query_enderecos = "select * from tb_enderecos"
+df_enderecos = pd.read_sql(query_enderecos, conn)
+
+# Encerrando a conexão
+conn.close()
