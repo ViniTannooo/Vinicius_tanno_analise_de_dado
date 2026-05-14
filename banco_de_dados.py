@@ -15,5 +15,5 @@ df_alunos = pd.read_sql(query_alunos, conn)
 query_enderecos = "select * from tb_enderecos"
 df_enderecos = pd.read_sql(query_enderecos, conn)
 
-# Encerrando a conexão
-conn.close()
+# merge entre tb_alunos e tb_enderecos
+df = pd.merge(df_alunos, df_enderecos, left_on="endereco_id", right_on="id", how="inner")
