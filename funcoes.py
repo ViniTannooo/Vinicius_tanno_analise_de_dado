@@ -15,4 +15,16 @@ data = resp.json()[0]['balanco']
 df = pd.DataFrame(data)
 
 def encontrar_contas_contabeis(df):
-    
+
+
+
+# %%
+print("Olá, esta é a primeira célula!")
+x = 10
+y = 20
+print(x + y)
+
+# %%
+print("Esta é a segunda célula.")
+
+# %%
